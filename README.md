@@ -162,6 +162,28 @@ backend/
 
 ## API Endpoints
 
+### Health Check Endpoints
+
+#### API Status
+- **GET /**
+- Returns a diagnostic message indicating the API is running.
+- Response: `Learnify API is running. Go to /api/ for endpoints.`
+
+#### Health Check
+- **GET /api/health**
+- Returns a simple health status of the API.
+- Response:
+  ```json
+  {
+    "status": "ok",
+    "message": "API is running"
+  }
+  ```
+
+#### Enhanced Health Check
+- **GET /api/healthy**
+- Returns a detailed health status including system information and database connectivity.
+
 ### Authentication Endpoints
 
 #### User Registration
@@ -207,24 +229,29 @@ backend/
 ### Quiz Endpoints
 
 #### Non-Verbal Reasoning Questions
-- **GET /api/nvr**
+- **GET /api/questions/nvr**
 - Returns a randomly generated non-verbal reasoning question.
 
 #### Spatial Reasoning Questions
-- **GET /api/spatial**
+- **GET /api/questions/spatial**
 - Returns a randomly generated spatial reasoning question.
 
 #### English Questions
-- **GET /api/english**
+- **GET /api/questions/english**
 - Fetches English quiz data from a JSON file.
 
 #### Maths Questions
-- **GET /api/maths**
+- **GET /api/questions/maths**
 - Fetches Maths quiz data from a JSON file.
 
 #### Verbal Reasoning Questions
-- **GET /api/vr**
+- **GET /api/questions/vr**
 - Fetches Verbal Reasoning quiz data from a JSON file.
+
+#### Diagram Generation
+- **POST /api/questions/diagram**
+- Generates a diagram based on provided parameters.
+- Request body: JSON with diagram specifications.
 
 ### User Management Endpoints
 
@@ -326,6 +353,12 @@ flask db upgrade
 You can use curl or tools like Postman to test the API endpoints:
 
 ```sh
+# Basic health check
+curl http://localhost:5000/
+
+# Get health status
+curl http://localhost:5000/api/health
+
 # Test user registration
 curl -X POST http://localhost:5000/api/auth/user/register \
   -H "Content-Type: application/json" \
@@ -335,6 +368,21 @@ curl -X POST http://localhost:5000/api/auth/user/register \
 curl -X POST http://localhost:5000/api/auth/user/login \
   -H "Content-Type: application/json" \
   -d '{"username":"test_user","password":"password123"}'
+
+# Get English questions
+curl http://localhost:5000/api/questions/english
+
+# Get Maths questions
+curl http://localhost:5000/api/questions/maths
+
+# Get Verbal Reasoning questions
+curl http://localhost:5000/api/questions/vr
+
+# Get Non-verbal Reasoning questions
+curl http://localhost:5000/api/questions/nvr
+
+# Get Spatial Reasoning questions
+curl http://localhost:5000/api/questions/spatial
 
 # Test protected endpoint (with JWT token)
 curl -X GET http://localhost:5000/api/auth/user/profile \
@@ -351,21 +399,35 @@ This project follows an open-source license. Check the repository for more detai
 
 This application is configured for easy deployment on Render.com:
 
-1. **Sign up for Render**
+### Deployment Steps
+
+1. **Prepare the Application for Render.com**
+   - Switch to SQLite for simpler deployment (no separate database service needed)
+   - Create a global Flask application instance for Gunicorn to use
+   ```python
+   # In app.py, add:
+   app = create_app()
+   ```
+   - Create the following configuration files:
+     - `render.yaml`: Defines services and environment variables
+     - `runtime.txt`: Specifies Python version 
+     - `Procfile`: Defines the web service command
+
+2. **Sign up for Render**
    - Create an account at [render.com](https://render.com)
 
-2. **Create a new Web Service**
+3. **Create a new Web Service**
    - Click "New +" and select "Web Service"
    - Connect your GitHub/GitLab repository 
    - Select the repository containing this code
 
-3. **Configure the Web Service**
+4. **Configure the Web Service**
    - Render will automatically detect the Python application
    - Environment: Python
    - Build Command: `pip install -r requirements.txt`
-   - Start Command: `gunicorn app:create_app()`
+   - Start Command: `gunicorn app:app`
 
-4. **Environment Variables**
+5. **Environment Variables**
    - Render automatically sets `RENDER_EXTERNAL_URL` and other variables
    - Add these additional variables in the dashboard:
      - `SECRET_KEY` (Generate a secure random string)
@@ -373,15 +435,27 @@ This application is configured for easy deployment on Render.com:
      - `DEBUG` = `False`
      - `CORS_ORIGINS` = Your frontend URL (or `*` for development)
 
-5. **Database**
+6. **Database Setup**
    - For development: Uses SQLite by default (stored in the app's file system)
    - For production: Consider adding a PostgreSQL database via Render
      - Create a PostgreSQL service in Render
      - Connect it to your Web Service
      - Render will set `DATABASE_URL` automatically
 
-6. **Deploy**
+7. **Deploy**
    - Click "Create Web Service"
    - Render will build and deploy your application
+
+8. **Verify Deployment**
+   - Check if your app is accessible at `https://your-service-name.onrender.com`
+   - Test the health endpoint: `https://your-service-name.onrender.com/api/health`
+   - Test the English questions endpoint: `https://your-service-name.onrender.com/api/questions/english`
+
+9. **Troubleshooting**
+   - If deployment fails, check Render's logs in the dashboard
+   - Common issues:
+     - Incorrect start command (should be `app:app` not `app:create_app()`)
+     - Missing dependencies in requirements.txt
+     - Environment variables not set correctly
 
 Your application will be available at `https://your-service-name.onrender.com`
