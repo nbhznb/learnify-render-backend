@@ -12,6 +12,12 @@ class Series:
         self.answer_path = ''
         self.distractors_path = []
         self.STATIC_ROOT = os.path.join(os.getcwd(), "static")
+        
+        # Ensure required directories exist
+        self.tmp_dir = os.path.join(self.STATIC_ROOT, 'tmp')
+        self.result_dir = os.path.join(self.STATIC_ROOT, 'result')
+        os.makedirs(self.tmp_dir, exist_ok=True)
+        os.makedirs(self.result_dir, exist_ok=True)
 
         # odd side have one hatch, even have one hatch. series
         self.XX = int(random.random()*5)+3
@@ -37,7 +43,7 @@ class Series:
 
             # part of the question
             if i < self.TOTAL_FIG:
-                question_tmpPath = os.path.join(self.STATIC_ROOT, 'tmp', f'series_question_{self.questionCount}_part_{i}.png')
+                question_tmpPath = os.path.join(self.tmp_dir, f'series_question_{self.questionCount}_part_{i}.png')
                 plt.savefig(question_tmpPath)
                 plt.close()
                 img = cv2.imread(question_tmpPath, 0)
@@ -47,7 +53,7 @@ class Series:
 
             # answer
             elif i == self.TOTAL_FIG:
-                self.answer_path = os.path.join(self.STATIC_ROOT, 'result', f'series_answer_{self.questionCount}.png')
+                self.answer_path = os.path.join(self.result_dir, f'series_answer_{self.questionCount}.png')
                 plt.savefig(self.answer_path)
                 plt.close()
                 img = cv2.imread(self.answer_path, 0)
@@ -57,7 +63,7 @@ class Series:
 
             # distractors
             else:
-                distractor_path = os.path.join(self.STATIC_ROOT, 'result', f'series_question_{self.questionCount}_dist_{i-self.TOTAL_FIG-1}.png')
+                distractor_path = os.path.join(self.result_dir, f'series_question_{self.questionCount}_dist_{i-self.TOTAL_FIG-1}.png')
                 plt.savefig(distractor_path)
                 plt.close()
                 img = cv2.imread(distractor_path, 0)
@@ -67,8 +73,8 @@ class Series:
                 self.distractors_path.append(distractor_path)
 
         # build question montage
-        question_path = os.path.join(self.STATIC_ROOT, 'tmp', f'series_question_{self.questionCount}_part_')
-        self.question_path = os.path.join(self.STATIC_ROOT, 'result', f'series_question_{self.questionCount}.png')
+        question_path = os.path.join(self.tmp_dir, f'series_question_{self.questionCount}_part_')
+        self.question_path = os.path.join(self.result_dir, f'series_question_{self.questionCount}.png')
 
         os.system('montage -mode concatenate -tile ' + str(self.TOTAL_FIG-1) + 'x1 ' + question_path + '[1-' + str(self.TOTAL_FIG-1) + '].png ' + self.question_path)
 

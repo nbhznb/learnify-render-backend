@@ -16,6 +16,12 @@ class Cut:
         self.distractors_path = []
         self.quadrantNum = random.choice([0, 1, 2, 3])
         self.STATIC_ROOT = os.path.join(os.getcwd(), "static")
+        
+        # Ensure required directories exist
+        self.tmp_dir = os.path.join(self.STATIC_ROOT, 'tmp')
+        self.result_dir = os.path.join(self.STATIC_ROOT, 'result')
+        os.makedirs(self.tmp_dir, exist_ok=True)
+        os.makedirs(self.result_dir, exist_ok=True)
 
     def distractor_sequence(self, A):
         seqs_of_polygons = [A]
@@ -39,13 +45,13 @@ class Cut:
         self.distractor_sequence(A)
         plt.axis('image')
         plt.axis('off')
-        question_tmpPath = os.path.join(self.STATIC_ROOT, 'tmp', f'cut_question_{self.questionCount}.png')
+        question_tmpPath = os.path.join(self.tmp_dir, f'cut_question_{self.questionCount}.png')
         plt.savefig(question_tmpPath)
         img = cv2.imread(question_tmpPath, 0)
         img = cropImage(img)
         cv2.imwrite(question_tmpPath, img)
-        self.question_path = os.path.join(self.STATIC_ROOT, 'result', f'cut_question_{self.questionCount}.png')
-        self.answer_path = os.path.join(self.STATIC_ROOT, 'result', f'cut_answer_{self.questionCount}.png')
+        self.question_path = os.path.join(self.result_dir, f'cut_question_{self.questionCount}.png')
+        self.answer_path = os.path.join(self.result_dir, f'cut_answer_{self.questionCount}.png')
         img = cv2.imread(question_tmpPath, 0)
         quad, rest_img = splitQuad(img, self.quadrantNum)
         cv2.imwrite(self.answer_path, quad)
@@ -66,14 +72,14 @@ class Cut:
                 i.drawPolygon()
             plt.axis('image')
             plt.axis('off')
-            distractor_tmpPath = os.path.join(self.STATIC_ROOT, 'tmp', f'cut_question_{self.questionCount}_dist_{j}.png')
+            distractor_tmpPath = os.path.join(self.tmp_dir, f'cut_question_{self.questionCount}_dist_{j}.png')
             plt.savefig(distractor_tmpPath)
             img = cv2.imread(distractor_tmpPath, 0)
             img = cropImage(img)
             cv2.imwrite(distractor_tmpPath, img)
             img = cv2.imread(distractor_tmpPath, 0)
             quad, rest_img = splitQuad(img, self.quadrantNum)
-            distractor_finalPath = os.path.join(self.STATIC_ROOT, 'result', f'cut_question_{self.questionCount}_dist_{j}.png')
+            distractor_finalPath = os.path.join(self.result_dir, f'cut_question_{self.questionCount}_dist_{j}.png')
             cv2.imwrite(distractor_finalPath, quad)
             self.distractors_path.append(distractor_finalPath)
             plt.close()

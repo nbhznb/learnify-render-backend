@@ -63,6 +63,12 @@ class FigureMatrixAndSequence:
         self.distractors_path = []
         self.STATIC_ROOT = os.path.join(os.getcwd(), "static")
         self.logic_choice = random.random()
+        
+        # Ensure required directories exist
+        self.tmp_dir = os.path.join(self.STATIC_ROOT, 'tmp')
+        self.result_dir = os.path.join(self.STATIC_ROOT, 'result')
+        os.makedirs(self.tmp_dir, exist_ok=True)
+        os.makedirs(self.result_dir, exist_ok=True)
 
     def generate_all_images(self):
         if self.logic_choice < 0.5:
@@ -83,7 +89,7 @@ class FigureMatrixAndSequence:
             # question
             plt.axis('image')
             plt.axis('off')
-            question_tmpPath = os.path.join(self.STATIC_ROOT, 'tmp', f'figureMatrix_question_{self.questionCount}_part_0.png')
+            question_tmpPath = os.path.join(self.tmp_dir, f'figureMatrix_question_{self.questionCount}_part_0.png')
 
             plt.savefig(question_tmpPath, dpi=150)
             img = cv2.imread(question_tmpPath, 0)
@@ -110,12 +116,12 @@ class FigureMatrixAndSequence:
                 plt.axis('image')
                 plt.axis('off')
                 if i in [1, 2, 3, 4]:
-                    question_tmpPath = os.path.join(self.STATIC_ROOT, 'tmp', f'figureMatrix_question_{self.questionCount}_part_{i}.png')
+                    question_tmpPath = os.path.join(self.tmp_dir, f'figureMatrix_question_{self.questionCount}_part_{i}.png')
                 elif i == 5:
-                    question_tmpPath = os.path.join(self.STATIC_ROOT, 'result', f'figureMatrix_answer_{self.questionCount}.png')
+                    question_tmpPath = os.path.join(self.result_dir, f'figureMatrix_answer_{self.questionCount}.png')
                     self.answer_path = question_tmpPath
                 else:
-                    question_tmpPath = os.path.join(self.STATIC_ROOT, 'result', f'figureMatrix_question_{self.questionCount}_dist_{i - 6}.png')
+                    question_tmpPath = os.path.join(self.result_dir, f'figureMatrix_question_{self.questionCount}_dist_{i - 6}.png')
                     self.distractors_path.append(question_tmpPath)
 
                 plt.savefig(question_tmpPath, dpi=150)
@@ -146,7 +152,7 @@ class FigureMatrixAndSequence:
             # question
             plt.axis('image')
             plt.axis('off')
-            question_tmpPath = os.path.join(self.STATIC_ROOT, 'tmp', f'figureMatrix_question_{self.questionCount}_part_0.png')
+            question_tmpPath = os.path.join(self.tmp_dir, f'figureMatrix_question_{self.questionCount}_part_0.png')
 
             plt.savefig(question_tmpPath, dpi=150)
             img = cv2.imread(question_tmpPath, 0)
@@ -173,12 +179,12 @@ class FigureMatrixAndSequence:
                 plt.axis('image')
                 plt.axis('off')
                 if i in [1, 2, 3, 4]:
-                    question_tmpPath = os.path.join(self.STATIC_ROOT, 'tmp', f'figureMatrix_question_{self.questionCount}_part_{i}.png')
+                    question_tmpPath = os.path.join(self.tmp_dir, f'figureMatrix_question_{self.questionCount}_part_{i}.png')
                 elif i == 5:
-                    question_tmpPath = os.path.join(self.STATIC_ROOT, 'result', f'figureMatrix_answer_{self.questionCount}.png')
+                    question_tmpPath = os.path.join(self.result_dir, f'figureMatrix_answer_{self.questionCount}.png')
                     self.answer_path = question_tmpPath
                 else:
-                    question_tmpPath = os.path.join(self.STATIC_ROOT, 'result', f'figureMatrix_question_{self.questionCount}_dist_{i - 6}.png')
+                    question_tmpPath = os.path.join(self.result_dir, f'figureMatrix_question_{self.questionCount}_dist_{i - 6}.png')
                     self.distractors_path.append(question_tmpPath)
 
                 plt.savefig(question_tmpPath, dpi=150)
@@ -188,8 +194,8 @@ class FigureMatrixAndSequence:
                 cv2.imwrite(question_tmpPath, img)
                 plt.close()
 
-        self.question_path = os.path.join(self.STATIC_ROOT, 'result', f'figureMatrix_question_{self.questionCount}.png')
-        os.system('montage -mode concatenate -tile 5x1 -border 5 ' + os.path.join(self.STATIC_ROOT, 'tmp', f'figureMatrix_question_{self.questionCount}_part_[0-4].png') + ' ' + self.question_path)
+        self.question_path = os.path.join(self.result_dir, f'figureMatrix_question_{self.questionCount}.png')
+        os.system('montage -mode concatenate -tile 5x1 -border 5 ' + os.path.join(self.tmp_dir, f'figureMatrix_question_{self.questionCount}_part_[0-4].png') + ' ' + self.question_path)
 
     def get_question(self):
         return self.question_path

@@ -5,6 +5,7 @@ from fold import Fold
 from grid import Grid
 from series import Series
 import os
+from utils.image_handlers import ensure_static_folders
 
 def generate_question(question_num):
     '''
@@ -12,6 +13,9 @@ def generate_question(question_num):
     even questions are easy, odd questions are difficult
     2 questions - 1 easy, 1 difficult per question type
     '''
+    # Ensure all required directories exist
+    ensure_static_folders()
+    
     static_dir = os.path.join(os.getcwd(), 'static')
     result_dir = os.path.join(static_dir, 'result')
 

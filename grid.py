@@ -18,6 +18,12 @@ class Grid:
         self.answer_path = ''
         self.distractors_path = []
         self.STATIC_ROOT = os.path.join(os.getcwd(), "static")
+        
+        # Ensure required directories exist
+        self.tmp_dir = os.path.join(self.STATIC_ROOT, 'tmp')
+        self.result_dir = os.path.join(self.STATIC_ROOT, 'result')
+        os.makedirs(self.tmp_dir, exist_ok=True)
+        os.makedirs(self.result_dir, exist_ok=True)
 
     def generate_all_images(self):
         dist_root_seq_of_polygons = []
@@ -48,7 +54,7 @@ class Grid:
 
             plt.axis('image')
             plt.axis('off')
-            question_base_path = os.path.join(self.STATIC_ROOT, 'tmp', f'grid_question_{self.questionCount}_{l}_0.png')
+            question_base_path = os.path.join(self.tmp_dir, f'grid_question_{self.questionCount}_{l}_0.png')
             plt.savefig(question_base_path)
             plt.close()
 
@@ -79,7 +85,7 @@ class Grid:
 
                 plt.axis('image')
                 plt.axis('off')
-                question_transform_path = os.path.join(self.STATIC_ROOT, 'tmp', f'grid_question_{self.questionCount}_{l}_{level}.png')
+                question_transform_path = os.path.join(self.tmp_dir, f'grid_question_{self.questionCount}_{l}_{level}.png')
                 plt.savefig(question_transform_path)
                 plt.close()
 
@@ -90,12 +96,12 @@ class Grid:
                 img = img.resize((300, 300), IMG.LANCZOS)
                 img.save(question_transform_path, quality=90)
 
-            level_montage_path = os.path.join(self.STATIC_ROOT, 'tmp', f'grid_question_{self.questionCount}_level_{l}_final.png')
+            level_montage_path = os.path.join(self.tmp_dir, f'grid_question_{self.questionCount}_level_{l}_final.png')
 
             if l == 2:
-                self.answer_path = os.path.join(self.STATIC_ROOT, 'result', f'grid_answer_{self.questionCount}.png')
-                os.system("cp " + os.path.join(self.STATIC_ROOT, 'tmp', f'grid_question_{self.questionCount}_2_2.png') + ' ' + self.answer_path)
-                os.system("montage -mode concatenate -border 2 " + os.path.join(self.STATIC_ROOT, 'tmp', f'grid_question_{self.questionCount}_{l}_[0-1].png') + " -tile 3x1 -geometry +1+1 " + level_montage_path)
+                self.answer_path = os.path.join(self.result_dir, f'grid_answer_{self.questionCount}.png')
+                os.system("cp " + os.path.join(self.tmp_dir, f'grid_question_{self.questionCount}_2_2.png') + ' ' + self.answer_path)
+                os.system("montage -mode concatenate -border 2 " + os.path.join(self.tmp_dir, f'grid_question_{self.questionCount}_{l}_[0-1].png') + " -tile 3x1 -geometry +1+1 " + level_montage_path)
 
                 # generate distractors
                 for dist in range(3):
@@ -139,7 +145,7 @@ class Grid:
 
                     plt.axis('image')
                     plt.axis('off')
-                    distractor_path = os.path.join(self.STATIC_ROOT, 'result', f'grid_question_{self.questionCount}_dist_{dist}.png')
+                    distractor_path = os.path.join(self.result_dir, f'grid_question_{self.questionCount}_dist_{dist}.png')
                     plt.savefig(distractor_path)
                     plt.close()
 
@@ -153,10 +159,10 @@ class Grid:
                     self.distractors_path.append(distractor_path)
 
             else:
-                os.system("montage -mode concatenate -border 2 " + os.path.join(self.STATIC_ROOT, 'tmp', f'grid_question_{self.questionCount}_{l}_[0-2].png') + " -tile 3x1 -geometry +1+1 " + level_montage_path)
+                os.system("montage -mode concatenate -border 2 " + os.path.join(self.tmp_dir, f'grid_question_{self.questionCount}_{l}_[0-2].png') + " -tile 3x1 -geometry +1+1 " + level_montage_path)
 
-        self.question_path = os.path.join(self.STATIC_ROOT, 'result', f'grid_question_{self.questionCount}.png')
-        os.system("montage -mode concatenate -border 2 " + os.path.join(self.STATIC_ROOT, 'tmp', f'grid_question_{self.questionCount}_level_[0-2]_final.png') + " -tile 1x3 -geometry +1+1 " + self.question_path)
+        self.question_path = os.path.join(self.result_dir, f'grid_question_{self.questionCount}.png')
+        os.system("montage -mode concatenate -border 2 " + os.path.join(self.tmp_dir, f'grid_question_{self.questionCount}_level_[0-2]_final.png') + " -tile 1x3 -geometry +1+1 " + self.question_path)
 
     def get_question(self):
         return self.question_path

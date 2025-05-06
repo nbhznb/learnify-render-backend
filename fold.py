@@ -16,6 +16,12 @@ class Fold:
         self.answer_path = ''
         self.distractors_path = []
         self.STATIC_ROOT = os.path.join(os.getcwd(), "static")
+        
+        # Ensure required directories exist
+        self.tmp_dir = os.path.join(self.STATIC_ROOT, 'tmp')
+        self.result_dir = os.path.join(self.STATIC_ROOT, 'result')
+        os.makedirs(self.tmp_dir, exist_ok=True)
+        os.makedirs(self.result_dir, exist_ok=True)
 
     def generate_all_images(self):
         sides = [0, 0, 2, 4]
@@ -35,26 +41,26 @@ class Fold:
 
         plt.axis('image')
         plt.axis('off')
-        question_baseImgPath = os.path.join(self.STATIC_ROOT, 'tmp', f'fold_question_{self.questionCount}_base.png')
+        question_baseImgPath = os.path.join(self.tmp_dir, f'fold_question_{self.questionCount}_base.png')
         plt.savefig(question_baseImgPath, transparent=True)
         plt.close()
 
         # save a flipped version
-        question_baseImgFlippedPath = os.path.join(self.STATIC_ROOT, 'tmp', f'fold_question_{self.questionCount}_base_flipped.png')
+        question_baseImgFlippedPath = os.path.join(self.tmp_dir, f'fold_question_{self.questionCount}_base_flipped.png')
         os.system('convert ' + question_baseImgPath + ' -flop ' + question_baseImgFlippedPath)
 
         one = IMG.open(question_baseImgPath).convert('RGBA')
         two = IMG.open(question_baseImgFlippedPath).convert('RGBA')
 
-        base_img_merge_filepath = os.path.join(self.STATIC_ROOT, 'tmp', f'fold_question_{self.questionCount}_base_merge.png')
+        base_img_merge_filepath = os.path.join(self.tmp_dir, f'fold_question_{self.questionCount}_base_merge.png')
         IMG.alpha_composite(one, two).save(base_img_merge_filepath)
 
         img = cv2.imread(base_img_merge_filepath, 0)
         height, width = img.shape
         # gives transparent image
 
-        self.question_path = os.path.join(self.STATIC_ROOT, 'result', f'fold_question_{self.questionCount}.png')
-        self.answer_path = os.path.join(self.STATIC_ROOT, 'result', f'fold_answer_{self.questionCount}.png')
+        self.question_path = os.path.join(self.result_dir, f'fold_question_{self.questionCount}.png')
+        self.answer_path = os.path.join(self.result_dir, f'fold_answer_{self.questionCount}.png')
         os.system('convert ' + question_baseImgPath + ' -strokewidth 1 -fill none -stroke black -draw \"stroke-dasharray 5 3 line ' + str(width / 2) + ',0 ' + str(width / 2) + ',' + str(height) + '\" ' + self.question_path)
         os.system('convert ' + base_img_merge_filepath + ' -strokewidth 1 -fill none -stroke black -draw \"stroke-dasharray 5 3 line ' + str(width / 2) + ',0 ' + str(width / 2) + ',' + str(height) + '\" ' + base_img_merge_filepath)
         os.system('convert ' + base_img_merge_filepath + '  -fill white -draw "rectangle 0,0 ' + str(width / 2) + ',' + str(height) + '" ' + self.answer_path)
@@ -66,9 +72,9 @@ class Fold:
 
         # distractors
         for j in range(3):
-            dist_base_img = os.path.join(self.STATIC_ROOT, 'tmp', f'fold_question_{self.questionCount}_dist_{j}_base.png')
-            dist_base_flipped_img = os.path.join(self.STATIC_ROOT, 'tmp', f'fold_question_{self.questionCount}_dist_{j}_base_flipped.png')
-            dist_base_merge_img = os.path.join(self.STATIC_ROOT, 'tmp', f'fold_question_{self.questionCount}_dist_{j}_base_merge.png')
+            dist_base_img = os.path.join(self.tmp_dir, f'fold_question_{self.questionCount}_dist_{j}_base.png')
+            dist_base_flipped_img = os.path.join(self.tmp_dir, f'fold_question_{self.questionCount}_dist_{j}_base_flipped.png')
+            dist_base_merge_img = os.path.join(self.tmp_dir, f'fold_question_{self.questionCount}_dist_{j}_base_merge.png')
             plt.figure()
             # additional transformation
             for temp in polys:
@@ -95,7 +101,7 @@ class Fold:
 
             img = cv2.imread(dist_base_merge_img, 0)
             height, width = img.shape
-            distractor_final_path = os.path.join(self.STATIC_ROOT, 'result', f'fold_question_{self.questionCount}_dist_{j}.png')
+            distractor_final_path = os.path.join(self.result_dir, f'fold_question_{self.questionCount}_dist_{j}.png')
             os.system('convert ' + dist_base_img + ' -strokewidth 1 -fill none -stroke black -draw \"stroke-dasharray 5 3 line ' + str(width / 2) + ',0 ' + str(width / 2) + ',' + str(height) + '\" ' + dist_base_img)
             os.system('convert ' + dist_base_merge_img + ' -strokewidth 1 -fill none -stroke black -draw \"stroke-dasharray 5 3 line ' + str(width / 2) + ',0 ' + str(width / 2) + ',' + str(height) + '\" ' + dist_base_merge_img)
             os.system('convert ' + dist_base_merge_img + ' -fill white -draw "rectangle 0,0 ' + str(width / 2) + ',' + str(height) + '" ' + distractor_final_path)

@@ -71,7 +71,7 @@ def add_description(fig, shape):
     fig.text(0.5, 0.02, description, ha="center", va="bottom", fontsize=12)
 
 
-def draw_shape(shape_data: list, shape_id: int = None, output_folder="src/static/result"):
+def draw_shape(shape_data: list, shape_id: int = None, output_folder="static/result"):
     """
     Draws shape(s) from the provided data and saves the resulting image(s) into output_folder.
     """
@@ -81,7 +81,15 @@ def draw_shape(shape_data: list, shape_id: int = None, output_folder="src/static
             logging.error(f"No shape found with ID {shape_id}.")
             return
 
-    os.makedirs(output_folder, exist_ok=True)  # Ensure output folder exists
+    # Ensure output folder exists - make it relative to current working directory
+    if not os.path.isabs(output_folder):
+        output_folder = os.path.join(os.getcwd(), output_folder)
+    
+    os.makedirs(output_folder, exist_ok=True)
+
+    # Also ensure other needed directories exist
+    tmp_dir = os.path.join(os.getcwd(), "static", "tmp")
+    os.makedirs(tmp_dir, exist_ok=True)
 
     for shape in shape_data:
         current_id = shape["id"]

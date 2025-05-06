@@ -4,7 +4,7 @@ from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
 from routes import register_blueprints
 from models import db, bcrypt, jwt
-from utils.image_handlers import cleanup_static_folders
+from utils.image_handlers import cleanup_static_folders, ensure_static_folders
 from config import Config
 import os
 
@@ -16,6 +16,10 @@ def create_app():
 
     # Load configurations
     app.config.from_object(Config)
+
+    # Ensure static directories exist
+    with app.app_context():
+        ensure_static_folders()
 
     # Initialize extensions
     db.init_app(app)

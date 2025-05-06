@@ -12,6 +12,12 @@ class Dice:
         self.answer_path = ''
         self.distractors_path = []
         self.STATIC_ROOT = os.path.join(os.getcwd(), "static")
+        
+        # Ensure required directories exist
+        self.tmp_dir = os.path.join(self.STATIC_ROOT, 'tmp')
+        self.result_dir = os.path.join(self.STATIC_ROOT, 'result')
+        os.makedirs(self.tmp_dir, exist_ok=True)
+        os.makedirs(self.result_dir, exist_ok=True)
 
         self.layout_type = random.choice([1, 2, 3, 4, 5])
         self.symbols = ['#', '*', '-', '?', '^', '**', u'\u2605', u'\u2020', u'\u002B']
@@ -122,11 +128,11 @@ class Dice:
 
         plt.axis('image')
         plt.axis('off')
-        question_tmpPath = os.path.join(self.STATIC_ROOT, 'tmp', f'dice_question_{self.questionCount}.png')
+        question_tmpPath = os.path.join(self.tmp_dir, f'dice_question_{self.questionCount}.png')
         plt.savefig(question_tmpPath)
 
         # crop the question image
-        self.question_path = os.path.join(self.STATIC_ROOT, 'result', f'dice_question_{self.questionCount}.png')
+        self.question_path = os.path.join(self.result_dir, f'dice_question_{self.questionCount}.png')
         img = cv2.imread(question_tmpPath, 0)
         img = cropImage(img)
         cv2.imwrite(self.question_path, img)
@@ -166,25 +172,25 @@ class Dice:
     def generate_answer(self):
         correct_choice = random.choice([0, 1, 2, 3, 4, 5, 6, 7])
         temp_triplet = self.triplets[correct_choice]
-        answer_tmpPath = os.path.join(self.STATIC_ROOT, 'tmp', f'dice_answer_{self.questionCount}.png')
+        answer_tmpPath = os.path.join(self.tmp_dir, f'dice_answer_{self.questionCount}.png')
         self.draw_three_sides([self.symbols[j - 1] for j in temp_triplet], answer_tmpPath)
 
         # crop the answer image
         img = cv2.imread(answer_tmpPath, 0)
         img = cropImage(img)
-        self.answer_path = os.path.join(self.STATIC_ROOT, 'result', f'dice_answer_{self.questionCount}.png')
+        self.answer_path = os.path.join(self.result_dir, f'dice_answer_{self.questionCount}.png')
         cv2.imwrite(self.answer_path, img)
 
     def generate_distractors(self):
         for i in range(3):
             temp_triplet = self.wrong_triplets[i]
-            distractor_tmpPath = os.path.join(self.STATIC_ROOT, 'tmp', f'dice_question_{self.questionCount}_dist_{i}.png')
+            distractor_tmpPath = os.path.join(self.tmp_dir, f'dice_question_{self.questionCount}_dist_{i}.png')
             self.draw_three_sides([self.symbols[j - 1] for j in temp_triplet], distractor_tmpPath)
 
             # crop the distractor image
             img = cv2.imread(distractor_tmpPath, 0)
             img = cropImage(img)
-            distractor_finalPath = os.path.join(self.STATIC_ROOT, 'result', f'dice_question_{self.questionCount}_dist_{i}.png')
+            distractor_finalPath = os.path.join(self.result_dir, f'dice_question_{self.questionCount}_dist_{i}.png')
             cv2.imwrite(distractor_finalPath, img)
             self.distractors_path.append(distractor_finalPath)
 
