@@ -44,11 +44,20 @@ def admin_approve():
         return jsonify({'error': 'Invalid duration specified'}), 400
 
     try:
-        # Use raw SQL to update the user's approved_until and status
+        # Map durations to SQLite datetime modifiers
+        duration_map = {
+            '1 month': '+1 month',
+            '3 months': '+3 months',
+            '6 months': '+6 months',
+            '1 year': '+1 year'
+        }
+        sqlite_duration = duration_map[duration]
+        
+        # Use SQLite's datetime function instead of PostgreSQL interval
         update_query = text(
-            "UPDATE users SET approved_until = CURRENT_TIMESTAMP + interval :duration, status = 'active' WHERE id = :user_id"
+            "UPDATE users SET approved_until = datetime('now', :duration), status = 'active' WHERE id = :user_id"
         )
-        db.session.execute(update_query, {'duration': duration, 'user_id': user_id})
+        db.session.execute(update_query, {'duration': sqlite_duration, 'user_id': user_id})
         db.session.commit()
         return jsonify({'message': 'User approved successfully.'}), 200
     except Exception as e:
