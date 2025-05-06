@@ -1,0 +1,15 @@
+Flask==3.1.0
+flask-bcrypt==1.0.1
+flask-cors==5.0.0
+flask-jwt-extended==4.7.1
+flask-sqlalchemy==3.1.1
+flask_wtf==1.2.2
+numpy<2.0.0
+opencv-python-headless==4.8.1.78
+matplotlib>=3.8.0
+Pillow==10.0.0
+pytz==2023.3
+sqlalchemy-utils==0.41.1
+werkzeug>=3.1.0
+gunicorn==21.2.0
+setuptools>=69.0.0

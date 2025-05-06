@@ -1,0 +1,146 @@
+{
+  "1": {
+      "category": "cutImage",
+      "text": "Identify the missing part of the shape.",
+      "explanation": "The correct answer is the part of the shape that fits perfectly into the missing section. The wrong answers are either flipped, rotated, or swapped versions of the correct shape.",
+      "question": "result/cut_question_1.png",
+      "answer": "result/cut_answer_1.png",
+      "distractors": [
+          "result/cut_question_1_dist_0.png",
+          "result/cut_question_1_dist_1.png",
+          "result/cut_question_1_dist_2.png"
+      ]
+  },
+  "2": {
+      "category": "cutImage",
+      "text": "Identify the missing part of the shape.",
+      "explanation": "The correct answer is the part of the shape that fits perfectly into the missing section. The wrong answers are either flipped, rotated, or swapped versions of the correct shape.",
+      "question": "result/cut_question_2.png",
+      "answer": "result/cut_answer_2.png",
+      "distractors": [
+          "result/cut_question_2_dist_0.png",
+          "result/cut_question_2_dist_1.png",
+          "result/cut_question_2_dist_2.png"
+      ]
+  },
+  "3": {
+      "category": "dice",
+      "text": "Identify the correct arrangement of symbols on the dice.",
+      "explanation": "The correct answer shows the correct arrangement of symbols on the dice. The wrong answers show incorrect arrangements.",
+      "question": "result/dice_question_3.png",
+      "answer": "result/dice_answer_3.png",
+      "distractors": [
+          "result/dice_question_3_dist_0.png",
+          "result/dice_question_3_dist_1.png",
+          "result/dice_question_3_dist_2.png"
+      ]
+  },
+  "4": {
+      "category": "dice",
+      "text": "Identify the correct arrangement of symbols on the dice.",
+      "explanation": "The correct answer shows the correct arrangement of symbols on the dice. The wrong answers show incorrect arrangements.",
+      "question": "result/dice_question_4.png",
+      "answer": "result/dice_answer_4.png",
+      "distractors": [
+          "result/dice_question_4_dist_0.png",
+          "result/dice_question_4_dist_1.png",
+          "result/dice_question_4_dist_2.png"
+      ]
+  },
+  "5": {
+      "category": "fold",
+      "text": "Identify the correct folded shape.",
+      "explanation": "The correct answer shows the correct folded shape. The wrong answers show incorrectly folded shapes.",
+      "question": "result/fold_question_5.png",
+      "answer": "result/fold_answer_5.png",
+      "distractors": [
+          "result/fold_question_5_dist_0.png",
+          "result/fold_question_5_dist_1.png",
+          "result/fold_question_5_dist_2.png"
+      ]
+  },
+  "6": {
+      "category": "fold",
+      "text": "Identify the correct folded shape.",
+      "explanation": "The correct answer shows the correct folded shape. The wrong answers show incorrectly folded shapes.",
+      "question": "result/fold_question_6.png",
+      "answer": "result/fold_answer_6.png",
+      "distractors": [
+          "result/fold_question_6_dist_0.png",
+          "result/fold_question_6_dist_1.png",
+          "result/fold_question_6_dist_2.png"
+      ]
+  },
+  "7": {
+      "category": "figureMatrixAndSequence",
+      "text": "Identify the correct pattern in the matrix.",
+      "explanation": "The correct answer shows the correct pattern in the matrix. The wrong answers show incorrect patterns.",
+      "question": "result/figureMatrix_question_7.png",
+      "answer": "result/figureMatrix_answer_7.png",
+      "distractors": [
+          "result/figureMatrix_question_7_dist_0.png",
+          "result/figureMatrix_question_7_dist_1.png",
+          "result/figureMatrix_question_7_dist_2.png"
+      ]
+  },
+  "8": {
+      "category": "figureMatrixAndSequence",
+      "text": "Identify the correct pattern in the matrix.",
+      "explanation": "The correct answer shows the correct pattern in the matrix. The wrong answers show incorrect patterns.",
+      "question": "result/figureMatrix_question_8.png",
+      "answer": "result/figureMatrix_answer_8.png",
+      "distractors": [
+          "result/figureMatrix_question_8_dist_0.png",
+          "result/figureMatrix_question_8_dist_1.png",
+          "result/figureMatrix_question_8_dist_2.png"
+      ]
+  },
+  "9": {
+      "category": "grid",
+      "text": "Identify the correct sequence of transformations.",
+      "explanation": "The correct answer shows the correct sequence of transformations. The wrong answers show incorrect sequences.",
+      "question": "result/grid_question_9.png",
+      "answer": "result/grid_answer_9.png",
+      "distractors": [
+          "result/grid_question_9_dist_0.png",
+          "result/grid_question_9_dist_1.png",
+          "result/grid_question_9_dist_2.png"
+      ]
+  },
+  "10": {
+      "category": "grid",
+      "text": "Identify the correct sequence of transformations.",
+      "explanation": "The correct answer shows the correct sequence of transformations. The wrong answers show incorrect sequences.",
+      "question": "result/grid_question_10.png",
+      "answer": "result/grid_answer_10.png",
+      "distractors": [
+          "result/grid_question_10_dist_0.png",
+          "result/grid_question_10_dist_1.png",
+          "result/grid_question_10_dist_2.png"
+      ]
+  },
+  "11": {
+      "category": "series",
+      "text": "Identify the correct pattern in the series.",
+      "explanation": "The correct answer shows the correct pattern in the series. The wrong answers show incorrect patterns.",
+      "question": "result/series_question_11.png",
+      "answer": "result/series_answer_11.png",
+      "distractors": [
+          "result/series_question_11_dist_0.png",
+          "result/series_question_11_dist_1.png",
+          "result/series_question_11_dist_2.png"
+      ]
+  },
+  "12": {
+      "category": "series",
+      "text": "Identify the correct pattern in the series.",
+      "explanation": "The correct answer shows the correct pattern in the series. The wrong answers show incorrect patterns.",
+      "question": "result/series_question_12.png",
+      "answer": "result/series_answer_12.png",
+      "distractors": [
+          "result/series_question_12_dist_0.png",
+          "result/series_question_12_dist_1.png",
+          "result/series_question_12_dist_2.png"
+      ]
+  }
+}
