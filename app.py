@@ -2,6 +2,7 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_wtf.csrf import CSRFProtect
+from flask_migrate import Migrate
 from routes import register_blueprints
 from models import db, bcrypt, jwt
 from utils.image_handlers import cleanup_static_folders, ensure_static_folders
@@ -26,8 +27,12 @@ def create_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
     csrf = CSRFProtect(app)
+    
+    # Initialize Flask-Migrate
+    migrate = Migrate(app, db)
 
-    # Create database tables
+    # Create database tables only if not using migrations
+    # Comment this out once migrations are set up
     with app.app_context():
         db.create_all()
 

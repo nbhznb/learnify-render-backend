@@ -15,3 +15,19 @@ services:
         value: false
       - key: CORS_ORIGINS
         value: "*"  # Update this with your frontend URL in production 
+      - key: DATABASE_URL
+        fromDatabase:
+          name: learnify-db
+          property: connectionString
+      - key: ADMIN_EMAIL
+        value: "admin@example.com"  # Change this to your admin email
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: ADMIN_PASSKEY
+        generateValue: true
+    preDeployCommand: python init_db.py  # Run database migrations before starting the app
+
+  - type: postgres
+    name: learnify-db
+    ipAllowList: []  # Only allow internal connections
+    plan: free  # Or choose a paid plan as needed 
