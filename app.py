@@ -33,8 +33,9 @@ def create_app():
 
     # Create database tables only if not using migrations
     # Comment this out once migrations are set up
-    with app.app_context():
-        db.create_all()
+    # NOTE: Commented out to prevent database reset on each restart
+    # with app.app_context():
+    #     db.create_all()
 
     # Register blueprints
     register_blueprints(app, csrf)
