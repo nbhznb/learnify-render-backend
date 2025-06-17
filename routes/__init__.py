@@ -9,48 +9,117 @@ from routes.admin import admin_bp
 from routes.questions import questions_bp
 from routes.static import static_bp
 from models import db
+from flask_cors import cross_origin
+import psutil
 
 # Create a health check blueprint
 health_bp = Blueprint('health', __name__)
 
 @health_bp.route('/health', methods=['GET'])
 def health_check():
-    return jsonify({"status": "ok", "message": "API is running"}), 200
+    return jsonify({'status': 'ok', 'message': 'API is running'})
 
 @health_bp.route('/healthy', methods=['GET'])
 def fly_health_check():
     """
-    Enhanced health check that provides system status and database connectivity.
-    This route is specifically designed for fly.io health checks.
+    Comprehensive health check for monitoring systems.
+    Returns detailed system and application status.
     """
-    health_data = {
-        "status": "ok",
-        "message": "API is running",
-        "timestamp": datetime.datetime.now().isoformat(),
-        "system": {
-            "python_version": sys.version,
-            "platform": platform.platform(),
-            "environment": os.environ.get("FLASK_ENV", "production")
-        }
-    }
-    
-    # Check database connection
     try:
-        # Execute a simple query to verify database connectivity
-        db_result = db.session.execute("SELECT 1").scalar()
-        health_data["database"] = {
-            "status": "connected" if db_result == 1 else "error",
-            "message": "Database connection successful"
+        # System information
+        system_info = {
+            'platform': platform.system(),
+            'platform_release': platform.release(),
+            'platform_version': platform.version(),
+            'architecture': platform.machine(),
+            'hostname': platform.node(),
+            'processor': platform.processor(),
+            'ram': f"{round(psutil.virtual_memory().total / (1024.0 ** 3))} GB",
+            'cpu_count': psutil.cpu_count(),
+            'cpu_usage': f"{psutil.cpu_percent(interval=1)}%"
         }
+        
+        # Application information
+        app_info = {
+            'python_version': platform.python_version(),
+            'environment': os.getenv('FLASK_ENV', 'production'),
+            'debug_mode': os.getenv('DEBUG', 'False'),
+            'database_configured': 'Yes' if os.getenv('DATABASE_URL') else 'No'
+        }
+
+        return jsonify({
+            'status': 'healthy',
+            'timestamp': '2024-12-19T12:00:00Z',
+            'system': system_info,
+            'application': app_info
+        })
     except Exception as e:
-        health_data["database"] = {
-            "status": "error",
-            "message": str(e)
-        }
-        health_data["status"] = "degraded"
-    
-    status_code = 200 if health_data["status"] == "ok" else 500
-    return jsonify(health_data), status_code
+        return jsonify({
+            'status': 'unhealthy',
+            'error': str(e)
+        }), 500
+
+# Add manual database initialization route
+@health_bp.route('/init-database', methods=['POST'])
+@cross_origin()
+def manual_init_database():
+    """
+    Manual database initialization endpoint.
+    This can be called to initialize the database if the automatic process fails.
+    """
+    try:
+        from init_db import init_database
+        success = init_database()
+        
+        if success:
+            return jsonify({
+                'status': 'success',
+                'message': 'Database initialized successfully'
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': 'Database initialization failed'
+            }), 500
+    except Exception as e:
+        import traceback
+        return jsonify({
+            'status': 'error',
+            'message': f'Database initialization failed: {str(e)}',
+            'traceback': traceback.format_exc()
+        }), 500
+
+# Add database test route
+@health_bp.route('/test-database', methods=['GET'])
+@cross_origin()
+def test_database():
+    """
+    Test database connection and basic operations.
+    """
+    try:
+        from test_db import test_database_connection
+        success = test_database_connection()
+        
+        if success:
+            return jsonify({
+                'status': 'success',
+                'message': 'Database connection test passed',
+                'database_url': os.getenv('DATABASE_URL', 'Not set')[:50] + '...' if os.getenv('DATABASE_URL') else 'Not set'
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': 'Database connection test failed',
+                'database_url': os.getenv('DATABASE_URL', 'Not set')[:50] + '...' if os.getenv('DATABASE_URL') else 'Not set'
+            }), 500
+    except Exception as e:
+        import traceback
+        return jsonify({
+            'status': 'error',
+            'message': f'Database test failed: {str(e)}',
+            'traceback': traceback.format_exc(),
+            'database_url': os.getenv('DATABASE_URL', 'Not set')[:50] + '...' if os.getenv('DATABASE_URL') else 'Not set'
+        }), 500
 
 def register_blueprints(app, csrf):
     # Register blueprints

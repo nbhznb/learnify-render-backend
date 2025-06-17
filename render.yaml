@@ -1,9 +1,22 @@
 services:
+  # PostgreSQL Database Service
+  - type: postgres
+    name: learnify-db
+    ipAllowList: []  # Only allow internal connections
+    plan: free  # Or choose a paid plan as needed
+    
+  # Web Service (Backend)
   - type: web
     name: learnify-backend
     env: python
-    buildCommand: apt-get update && apt-get install -y imagemagick && pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    buildCommand: |
+      apt-get update && 
+      apt-get install -y imagemagick && 
+      pip install -r requirements.txt
+    startCommand: |
+      python test_db.py && 
+      python init_db.py && 
+      gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.0
@@ -25,9 +38,11 @@ services:
         generateValue: true
       - key: ADMIN_PASSKEY
         generateValue: true
-    preDeployCommand: python init_db.py  # Run database migrations before starting the app
-
-  - type: postgres
-    name: learnify-db
-    ipAllowList: []  # Only allow internal connections
-    plan: free  # Or choose a paid plan as needed 
+      - key: RENDER
+        value: true
+    # Make sure database initialization happens before starting the web service
+    preDeployCommand: |
+      echo "Starting database initialization..." &&
+      python test_db.py &&
+      python init_db.py &&
+      echo "Database initialization complete." 
