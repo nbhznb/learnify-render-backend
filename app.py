@@ -40,15 +40,27 @@ def create_app():
     # Initialize Flask-Migrate
     migrate = Migrate(app, db)
 
-    # Create database tables only if not using migrations and in development
-    if app.config.get('DEBUG', False):
-        print("Development mode: Creating database tables...")
-        with app.app_context():
+    # Always ensure database tables exist
+    print("Ensuring database tables exist...")
+    with app.app_context():
+        try:
+            # Test if tables exist by trying a simple query
+            from models import User
+            User.query.count()
+            print("✓ Database tables already exist")
+        except Exception as e:
+            print(f"Database tables don't exist or are inaccessible: {e}")
+            print("Creating database tables...")
             try:
                 db.create_all()
-                print("✓ Database tables created")
-            except Exception as e:
-                print(f"✗ Database table creation failed: {e}")
+                print("✓ Database tables created successfully")
+                
+                # Verify table creation worked
+                User.query.count()
+                print("✓ Database tables verified and accessible")
+            except Exception as e2:
+                print(f"✗ Database table creation failed: {e2}")
+                raise e2
 
     # Register blueprints
     register_blueprints(app, csrf)
